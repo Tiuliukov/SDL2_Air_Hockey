@@ -218,8 +218,8 @@ EEvent GUI_Renderer::checkEvent(SElement & inMallet) const
 			//	(event.button.x > 135) && (event.button.x < 300))
 			//	return eEvent_Settings;
 			
-			if (event.button.y > boardHeight - malletDiameter - borderWidth && 				// SoundOn/SouundOff button borders
-				event.button.x < malletDiameter + borderWidth)
+			if (event.button.y > boardHeight - speakerDiameter - borderWidth && 				// SoundOn/SouundOff button borders
+				event.button.x < speakerDiameter + borderWidth)
 				return eEvent_Sound;
 		}
 		if (event.button.button == SDL_BUTTON_RIGHT)
@@ -318,11 +318,11 @@ bool GUI_Renderer::enableSound()
 void GUI_Renderer::drawSpeaker()
 {																													
 	if (soundOn){
-		SDL_Rect mDst{ borderWidth, boardHeight - malletDiameter - borderWidth, malletDiameter, malletDiameter }; 
+		SDL_Rect mDst{ borderWidth, boardHeight - speakerDiameter - borderWidth, speakerDiameter, speakerDiameter }; 
 		SDL_RenderCopy(mRenderer, mSpeakerOn, &Src, &mDst);
 	}
 	else {
-		SDL_Rect mDst{ borderWidth, boardHeight - malletDiameter - borderWidth, malletDiameter, malletDiameter }; 
+		SDL_Rect mDst{ borderWidth, boardHeight - speakerDiameter - borderWidth, speakerDiameter, speakerDiameter }; 
 		SDL_RenderCopy(mRenderer, mSpeakerOff, &Src, &mDst);
 	}
 

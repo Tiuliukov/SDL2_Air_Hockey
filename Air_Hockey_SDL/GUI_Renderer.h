@@ -13,7 +13,7 @@
 const int boardWidth = 450;           //standard air hockey field size 232/124. Ratio ~1.855                         
 const int boardHeight = 840;
 const int malletDiameter = 50;
-const int malletDiameter = 40;
+const int speakerDiameter = 40;
 const int puckDiameter = 40;
 const int malletRadius = 25;
 const int puckRadius = 20;
@@ -31,7 +31,7 @@ public:
 	~GUI_Renderer();
 
 	void newGame(EDifficulty inDifficulty); 
-	EEvent checkEvent(SElement & inStriker) const;
+	EEvent checkEvent(SElement & inMallet) const;
 	void draw(const std::vector<SElement> & inElements);
 	bool enableSound();
 	void playClashSound(EClash s);
