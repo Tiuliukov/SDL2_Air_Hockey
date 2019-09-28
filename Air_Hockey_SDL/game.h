@@ -17,6 +17,7 @@ private:
 	std::unique_ptr<GUI_Renderer> mGameUI;
 	std::vector<SElement> mGameElements;
 	EDifficulty gameDifficulty = eDifficulty_Easy;
+	bool mGamePreparation = false;
 	bool mIsPlay = false;
 	bool mMute = false;
 

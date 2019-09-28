@@ -7,7 +7,7 @@
 
 #include <iostream>
 #include <vector>
-
+#include <string>
 #include "types.h"
 
 const int boardWidth = 450;           //standard air hockey field size 232/124. Ratio ~1.855                         
@@ -31,10 +31,11 @@ public:
 	~GUI_Renderer();
 
 	void newGame(EDifficulty inDifficulty); 
-	EEvent checkEvent(SElement & inMallet) const;
-	void draw(const std::vector<SElement> & inElements);
+	EEvent checkEvent(SElement & inStriker) const;
+	void draw(const std::vector<SElement> & inElements, bool gamePreparation);
 	bool enableSound();
 	void playClashSound(EClash s);
+	void printMsg();
 
 private:
 
@@ -42,11 +43,11 @@ private:
 	void loadImages();
 	void loadSounds();
 	void drawSpeaker();
-
 	bool soundOn = true;
 	SDL_Window* mWindow;
 	SDL_Renderer* mRenderer;
 	SDL_Surface* mTTF;
+	SDL_Surface* mTtf;
 	SDL_Texture* mGameField;
 	SDL_Texture* mDifficultyEasy;
 	SDL_Texture* mDifficultyNormal;
@@ -54,6 +55,7 @@ private:
 	SDL_Texture* mMalletBot;
 	SDL_Texture* mPuck;
 	SDL_Texture* mGameScore;
+	SDL_Texture* mMsg;
 	SDL_Texture* mSpeakerOn;
 	SDL_Texture* mSpeakerOff;
 	TTF_Font *mFont;

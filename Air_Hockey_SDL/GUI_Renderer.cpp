@@ -6,9 +6,11 @@ static const int sizeOfSRC_Rect = 550;
 
 static const SDL_Color cColorRed = { 255, 0, 0 };
 static const SDL_Color cColorBlue = { 0, 0, 255 };
+static const SDL_Color cColorGreen = { 0, 128, 0 }; 
 static const int fontScoreH = 40;
 static const int fontScoreW = 20;
-
+static const int fontMsgH = 50;
+static const int fontMsgW = 200;
 SDL_Rect Src; 
 
 //==============================================================================
@@ -207,12 +209,18 @@ EEvent GUI_Renderer::checkEvent(SElement & inMallet) const
 	case SDL_MOUSEBUTTONUP:
 		if (event.button.button == SDL_BUTTON_LEFT)
 		{
-			if ((event.button.y > 125) && (event.button.y < 175) && 				// Play button borders
-				(event.button.x > 135) && (event.button.x < 300))
-				return eEvent_Play;
+			if ((event.button.x > 135) && (event.button.x < 300) && 				// Play button borders
+				(event.button.y > 125) && (event.button.y < 175))
+				return eEvent_PrepareToPlay;
 
 			if ((event.button.y > 225) && (event.button.y < 265)) 					// Difficulty button borders
 				return eEvent_ChangeDifficulty;
+
+			if ((event.button.y > (boardHeight * 0.75 - puckRadius)) && (event.button.y < (boardHeight * 0.75 + puckRadius)) &&
+				(event.button.x > (boardWidth / 2 - puckRadius)) && (event.button.x < (boardWidth / 2 + puckRadius)))
+			{
+				return eEvent_Play;
+			}
 
 			//if ((event.button.y > 305) && (event.button.y < 345) && 				// Settings button borders
 			//	(event.button.x > 135) && (event.button.x < 300))
@@ -233,7 +241,7 @@ EEvent GUI_Renderer::checkEvent(SElement & inMallet) const
 	return eEvent_NoEvent;
 }
 
-void GUI_Renderer::draw(const std::vector<SElement> & inElements)
+void GUI_Renderer::draw(const std::vector<SElement> & inElements, bool gamePreparation)
 {
 	SDL_RenderClear(mRenderer);
 	SDL_RenderCopy(mRenderer, mGameField, NULL, NULL);
@@ -242,7 +250,8 @@ void GUI_Renderer::draw(const std::vector<SElement> & inElements)
 	Dst.x = boardWidth - fontScoreW * 2;
 	Dst.h = fontScoreH;
 	Dst.w = fontScoreW;
-
+	//std::cout << "draw\n";
+	
 	// Draw current score for Bot
 	Dst.y = boardHeight / 2 - fontScoreH;
 	SDL_Color mColScoreBot = (inElements[eTypeOfElement_Bot].score >= inElements[eTypeOfElement_Player].score) ? cColorRed : cColorBlue ;
@@ -261,6 +270,11 @@ void GUI_Renderer::draw(const std::vector<SElement> & inElements)
 	SDL_FreeSurface(mTTF);
 	SDL_DestroyTexture(mGameScore);
 
+	if (gamePreparation)
+	{
+		printMsg();
+	}
+	
 	// Draw Puck
 	Dst.h = Dst.w = puckDiameter;
 	Dst.x = inElements[eTypeOfElement_Puck].xCurrPos; 
@@ -280,7 +294,9 @@ void GUI_Renderer::draw(const std::vector<SElement> & inElements)
 
 	// Draw SoundOn/SoundOff button
 	drawSpeaker();
+
 	SDL_RenderPresent(mRenderer);
+	
 }
 
 void GUI_Renderer::newGame(EDifficulty difficulty)
@@ -327,6 +343,22 @@ void GUI_Renderer::drawSpeaker()
 	}
 
 	
+}
+
+void GUI_Renderer::printMsg()
+{
+	SDL_Rect Msg;
+	Msg.x = 140;
+	Msg.h = fontMsgH;
+	Msg.w = fontMsgW;
+
+	Msg.y = 500;
+	SDL_Color mColMsg = cColorGreen;
+	mTtf = TTF_RenderText_Solid(mFont, "Please, take your mallet", mColMsg);
+	mMsg = SDL_CreateTextureFromSurface(mRenderer, mTtf);
+	SDL_RenderCopy(mRenderer, mMsg, 0, &Msg);
+	SDL_FreeSurface(mTtf);
+	SDL_DestroyTexture(mMsg);
 }
 
 void GUI_Renderer::playClashSound(EClash sound)

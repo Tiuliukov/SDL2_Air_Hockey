@@ -218,17 +218,26 @@ void AirHockey::startGame()
 		case eEvent_esc:
 			return;
 
+		case eEvent_PrepareToPlay:
+			if (!mIsPlay)
+			{
+				mGamePreparation = true;
+				
+				//prepareForGame();
+			}
+			break;
+			
+			//break;
 		case eEvent_Play:
 			if (!mIsPlay)
 			{
+				mGamePreparation = false;
 				mIsPlay = true;
-				prepareForGame();
 			}
 			break;
 
 		case eEvent_ChangeDifficulty:
-			if (!mIsPlay)
-			{
+			if (!mIsPlay){
 				(gameDifficulty == eDifficulty_Easy ? gameDifficulty = eDifficulty_Normal : gameDifficulty = eDifficulty_Easy); 
 				mGameUI->newGame(gameDifficulty);
 			}
@@ -241,8 +250,7 @@ void AirHockey::startGame()
 			break;
 
 		case eEvent_Menu:
-			if (mIsPlay)
-			{
+			if (mIsPlay){
 				mIsPlay = false;
 				mGameElements[eTypeOfElement_Bot].score = 0;
 				mGameElements[eTypeOfElement_Player].score = 0;
@@ -251,12 +259,18 @@ void AirHockey::startGame()
 			break;
 		}
 
-		if (mIsPlay)
-		{
+		if (mGamePreparation && !mIsPlay) {
+			prepareForGame();
+			mGameUI->draw(mGameElements, mGamePreparation);
+			
+		}
+
+		if (mIsPlay && !mGamePreparation){
+	
 			calcBotPos();
 			checkBoardLimitsFor(eTypeOfElement_Player);
 			calcGameState();
-			mGameUI->draw(mGameElements);
+			mGameUI->draw(mGameElements, mGamePreparation);
 		}
 	}
 }
