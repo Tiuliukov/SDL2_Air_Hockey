@@ -42,7 +42,7 @@ GUI_Renderer::~GUI_Renderer()
 	SDL_DestroyTexture(mGameField);
 	SDL_DestroyTexture(mDifficultyEasy);
 	SDL_DestroyTexture(mDifficultyNormal);
-	SDL_DestroyTexture(mMallet);
+	SDL_DestroyTexture(mMalletPlayer);
 	SDL_DestroyTexture(mMalletBot);
 	SDL_DestroyTexture(mPuck);
 	SDL_DestroyTexture(mGameScore);
@@ -93,8 +93,8 @@ void GUI_Renderer::loadImages()
 		std::cerr << "IMG error: " << IMG_GetError() << std::endl;
 		exit(2);
 	}
-	mMallet = IMG_LoadTexture(mRenderer, "assets/Mallet.png");
-	if (!mMallet)
+	mMalletPlayer = IMG_LoadTexture(mRenderer, "assets/Mallet.png");
+	if (!mMalletPlayer)
 	{
 		std::cerr << "IMG error: " << IMG_GetError() << std::endl;
 		exit(2);
@@ -241,32 +241,31 @@ EEvent GUI_Renderer::checkEvent(SElement & inMallet) const
 	return eEvent_NoEvent;
 }
 
-void GUI_Renderer::draw(const std::vector<SElement> & inElements, bool gamePreparation)
+void GUI_Renderer::drawGame(const std::vector<SElement> & inElements, bool gamePreparation)
 {
 	SDL_RenderClear(mRenderer);
 	SDL_RenderCopy(mRenderer, mGameField, NULL, NULL);
 
-	SDL_Rect Dst;
-	Dst.x = boardWidth - fontScoreW * 2;
-	Dst.h = fontScoreH;
-	Dst.w = fontScoreW;
-	//std::cout << "draw\n";
+	SDL_Rect gameElement;
+	gameElement.x = boardWidth - fontScoreW * 2;
+	gameElement.h = fontScoreH;
+	gameElement.w = fontScoreW;
 	
 	// Draw current score for Bot
-	Dst.y = boardHeight / 2 - fontScoreH;
+	gameElement.y = boardHeight / 2 - fontScoreH;
 	SDL_Color mColScoreBot = (inElements[eTypeOfElement_Bot].score >= inElements[eTypeOfElement_Player].score) ? cColorRed : cColorBlue ;
 	mTTF = TTF_RenderText_Solid(mFont, std::to_string(inElements[eTypeOfElement_Bot].score).c_str(), mColScoreBot);
 	mGameScore = SDL_CreateTextureFromSurface(mRenderer, mTTF);
-	SDL_RenderCopy(mRenderer, mGameScore, 0, &Dst);
+	SDL_RenderCopy(mRenderer, mGameScore, 0, &gameElement);
 	SDL_FreeSurface(mTTF);
 	SDL_DestroyTexture(mGameScore);
-
+	
 	// Draw current score for Player
-	Dst.y = boardHeight / 2;
+	gameElement.y = boardHeight / 2;
 	SDL_Color mColScorePlayer = (inElements[eTypeOfElement_Player].score > inElements[eTypeOfElement_Bot].score ? cColorRed : cColorBlue);
 	mTTF = TTF_RenderText_Solid(mFont, std::to_string(inElements[eTypeOfElement_Player].score).c_str(), mColScorePlayer);
 	mGameScore = SDL_CreateTextureFromSurface(mRenderer, mTTF);
-	SDL_RenderCopy(mRenderer, mGameScore, 0, &Dst);
+	SDL_RenderCopy(mRenderer, mGameScore, 0, &gameElement);
 	SDL_FreeSurface(mTTF);
 	SDL_DestroyTexture(mGameScore);
 
@@ -276,28 +275,29 @@ void GUI_Renderer::draw(const std::vector<SElement> & inElements, bool gamePrepa
 	}
 	
 	// Draw Puck
-	Dst.h = Dst.w = puckDiameter;
-	Dst.x = inElements[eTypeOfElement_Puck].xCurrPos; 
-	Dst.y = inElements[eTypeOfElement_Puck].yCurrPos;
-	SDL_RenderCopy(mRenderer, mPuck, &Src, &Dst);
-
+	drawGameElement(gameElement, mPuck, inElements[eTypeOfElement_Puck], puckDiameter);
+	
 	// Draw Bot
-	Dst.h = Dst.w = malletDiameter;
-	Dst.x = inElements[eTypeOfElement_Bot].xCurrPos;
-	Dst.y = inElements[eTypeOfElement_Bot].yCurrPos;
-	SDL_RenderCopy(mRenderer, mMalletBot, &Src, &Dst);
+	drawGameElement(gameElement, mMalletBot, inElements[eTypeOfElement_Bot], malletDiameter);
 
 	// Draw Player
-	Dst.x = inElements[eTypeOfElement_Player].xCurrPos;
-	Dst.y = inElements[eTypeOfElement_Player].yCurrPos;
-	SDL_RenderCopy(mRenderer, mMallet, &Src, &Dst);
-
+	drawGameElement(gameElement, mMalletPlayer, inElements[eTypeOfElement_Player], malletDiameter);
+	
 	// Draw SoundOn/SoundOff button
 	drawSpeaker();
 
 	SDL_RenderPresent(mRenderer);
-	
 }
+
+void GUI_Renderer::drawGameElement(SDL_Rect & inGameElement, SDL_Texture* texture, const SElement & inElement, const int & diameter)
+{
+	inGameElement.h = inGameElement.w = diameter;
+	inGameElement.x = inElement.xCurrPos;
+	inGameElement.y = inElement.yCurrPos;
+	SDL_RenderCopy(mRenderer, texture, &Src, &inGameElement);
+}
+
+
 
 void GUI_Renderer::newGame(EDifficulty difficulty)
 {

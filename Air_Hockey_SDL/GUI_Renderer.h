@@ -32,10 +32,10 @@ public:
 
 	void newGame(EDifficulty inDifficulty); 
 	EEvent checkEvent(SElement & inStriker) const;
-	void draw(const std::vector<SElement> & inElements, bool gamePreparation);
-	void drawElement();
+	void drawGame(const std::vector<SElement> & inElements, bool gamePreparation);
+	void drawGameElement(SDL_Rect & inGameElement, SDL_Texture* texture, const SElement & inElement, const int & diameter);
 	bool enableSound();
-	void playClashSound(EClash s);
+	void playClashSound(EClash s); //???????????????
 	void printMsg(std::string msg);
 
 private:
@@ -52,7 +52,7 @@ private:
 	SDL_Texture* mGameField;
 	SDL_Texture* mDifficultyEasy;
 	SDL_Texture* mDifficultyNormal;
-	SDL_Texture* mMallet;
+	SDL_Texture* mMalletPlayer;
 	SDL_Texture* mMalletBot;
 	SDL_Texture* mPuck;
 	SDL_Texture* mGameScore;
