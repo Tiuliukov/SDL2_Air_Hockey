@@ -247,27 +247,9 @@ void GUI_Renderer::drawGame(const std::vector<SElement> & inElements, bool gameP
 	SDL_RenderCopy(mRenderer, mGameField, NULL, NULL);
 
 	SDL_Rect gameElement;
-	gameElement.x = boardWidth - fontScoreW * 2;
-	gameElement.h = fontScoreH;
-	gameElement.w = fontScoreW;
-	
-	// Draw current score for Bot
-	gameElement.y = boardHeight / 2 - fontScoreH;
-	SDL_Color mColScoreBot = (inElements[eTypeOfElement_Bot].score >= inElements[eTypeOfElement_Player].score) ? cColorRed : cColorBlue ;
-	mTTF = TTF_RenderText_Solid(mFont, std::to_string(inElements[eTypeOfElement_Bot].score).c_str(), mColScoreBot);
-	mGameScore = SDL_CreateTextureFromSurface(mRenderer, mTTF);
-	SDL_RenderCopy(mRenderer, mGameScore, 0, &gameElement);
-	SDL_FreeSurface(mTTF);
-	SDL_DestroyTexture(mGameScore);
-	
-	// Draw current score for Player
-	gameElement.y = boardHeight / 2;
-	SDL_Color mColScorePlayer = (inElements[eTypeOfElement_Player].score > inElements[eTypeOfElement_Bot].score ? cColorRed : cColorBlue);
-	mTTF = TTF_RenderText_Solid(mFont, std::to_string(inElements[eTypeOfElement_Player].score).c_str(), mColScorePlayer);
-	mGameScore = SDL_CreateTextureFromSurface(mRenderer, mTTF);
-	SDL_RenderCopy(mRenderer, mGameScore, 0, &gameElement);
-	SDL_FreeSurface(mTTF);
-	SDL_DestroyTexture(mGameScore);
+
+	// Draw Score
+	drawScore(gameElement, inElements);
 
 	if (gamePreparation)
 	{
@@ -295,6 +277,31 @@ void GUI_Renderer::drawGameElement(SDL_Rect & inGameElement, SDL_Texture* textur
 	inGameElement.x = inElement.xCurrPos;
 	inGameElement.y = inElement.yCurrPos;
 	SDL_RenderCopy(mRenderer, texture, &Src, &inGameElement);
+}
+
+void GUI_Renderer::drawScore(SDL_Rect & inGameElement, const std::vector<SElement>& inElements)
+{
+	inGameElement.x = boardWidth - fontScoreW * 2;
+	inGameElement.h = fontScoreH;
+	inGameElement.w = fontScoreW;
+
+	// Draw current score for Bot
+	inGameElement.y = boardHeight / 2 - fontScoreH;
+	SDL_Color mColScoreBot = (inElements[eTypeOfElement_Bot].score >= inElements[eTypeOfElement_Player].score) ? cColorRed : cColorBlue;
+	mTTF = TTF_RenderText_Solid(mFont, std::to_string(inElements[eTypeOfElement_Bot].score).c_str(), mColScoreBot);
+	mGameScore = SDL_CreateTextureFromSurface(mRenderer, mTTF);
+	SDL_RenderCopy(mRenderer, mGameScore, 0, &inGameElement);
+	SDL_FreeSurface(mTTF);
+	SDL_DestroyTexture(mGameScore);
+
+	// Draw current score for Player
+	inGameElement.y = boardHeight / 2;
+	SDL_Color mColScorePlayer = (inElements[eTypeOfElement_Player].score > inElements[eTypeOfElement_Bot].score ? cColorRed : cColorBlue);
+	mTTF = TTF_RenderText_Solid(mFont, std::to_string(inElements[eTypeOfElement_Player].score).c_str(), mColScorePlayer);
+	mGameScore = SDL_CreateTextureFromSurface(mRenderer, mTTF);
+	SDL_RenderCopy(mRenderer, mGameScore, 0, &inGameElement);
+	SDL_FreeSurface(mTTF);
+	SDL_DestroyTexture(mGameScore);
 }
 
 

@@ -34,6 +34,7 @@ public:
 	EEvent checkEvent(SElement & inStriker) const;
 	void drawGame(const std::vector<SElement> & inElements, bool gamePreparation);
 	void drawGameElement(SDL_Rect & inGameElement, SDL_Texture* texture, const SElement & inElement, const int & diameter);
+	void drawScore(SDL_Rect & inGameElement, const std::vector<SElement> & inElements);
 	bool enableSound();
 	void playClashSound(EClash s); //???????????????
 	void printMsg(std::string msg);
