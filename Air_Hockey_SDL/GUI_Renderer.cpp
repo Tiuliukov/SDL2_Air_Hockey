@@ -299,21 +299,15 @@ void GUI_Renderer::drawGameElement(SDL_Rect & inGameElement, SDL_Texture* textur
 
 
 
-void GUI_Renderer::newGame(EDifficulty difficulty)
+void GUI_Renderer::gameMenu(EDifficulty difficulty)
 {
 	SDL_RenderClear(mRenderer);
-	SDL_RenderCopy(mRenderer, mDifficultyEasy, NULL, NULL);
-	SDL_RenderPresent(mRenderer);
-
+	
 	if (difficulty == eDifficulty_Easy) {
-		SDL_RenderClear(mRenderer);
 		SDL_RenderCopy(mRenderer, mDifficultyEasy, NULL, NULL);
-		SDL_RenderPresent(mRenderer);
 	}
 	if (difficulty == eDifficulty_Normal) {
-		SDL_RenderClear(mRenderer);
 		SDL_RenderCopy(mRenderer, mDifficultyNormal, NULL, NULL);
-		SDL_RenderPresent(mRenderer);
 	}
 	drawSpeaker();
 	SDL_RenderPresent(mRenderer);

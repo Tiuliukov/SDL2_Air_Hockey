@@ -216,7 +216,7 @@ void AirHockey::calcBotPos()
 
 void AirHockey::startGame()
 {
-	mGameUI->newGame(gameDifficulty);
+	mGameUI->gameMenu(gameDifficulty);
 
 	while (true)
 	{
@@ -244,27 +244,27 @@ void AirHockey::startGame()
 		case eEvent_ChangeDifficulty:
 			if (!mIsPlay){
 				(gameDifficulty == eDifficulty_Easy ? gameDifficulty = eDifficulty_Normal : gameDifficulty = eDifficulty_Easy); 
-				mGameUI->newGame(gameDifficulty);
+				mGameUI->gameMenu(gameDifficulty);
 			}
 			break;
 
 		case eEvent_Sound:
 			mMute = mGameUI->enableSound();
 			if (!mIsPlay)
-				mGameUI->newGame(gameDifficulty);
+				mGameUI->gameMenu(gameDifficulty);
 			break;
 		case eEvent_Menu:
 			if (mIsPlay){
 				mIsPlay = false;
 				mGameElements[eTypeOfElement_Bot].score = 0;
 				mGameElements[eTypeOfElement_Player].score = 0;
-				mGameUI->newGame(gameDifficulty);
+				mGameUI->gameMenu(gameDifficulty);
 			}
 			break;
 		}
 		if (gameOver == true)
 		{
-			mGameUI->newGame(gameDifficulty);
+			mGameUI->gameMenu(gameDifficulty);
 			gameOver = false;
 		}
 			

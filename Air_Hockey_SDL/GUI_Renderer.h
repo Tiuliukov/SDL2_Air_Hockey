@@ -30,7 +30,7 @@ public:
 	GUI_Renderer();
 	~GUI_Renderer();
 
-	void newGame(EDifficulty inDifficulty); 
+	void gameMenu(EDifficulty inDifficulty); 
 	EEvent checkEvent(SElement & inStriker) const;
 	void drawGame(const std::vector<SElement> & inElements, bool gamePreparation);
 	void drawGameElement(SDL_Rect & inGameElement, SDL_Texture* texture, const SElement & inElement, const int & diameter);
