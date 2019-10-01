@@ -33,9 +33,10 @@ public:
 	void newGame(EDifficulty inDifficulty); 
 	EEvent checkEvent(SElement & inStriker) const;
 	void draw(const std::vector<SElement> & inElements, bool gamePreparation);
+	void drawElement();
 	bool enableSound();
 	void playClashSound(EClash s);
-	void printMsg();
+	void printMsg(std::string msg);
 
 private:
 

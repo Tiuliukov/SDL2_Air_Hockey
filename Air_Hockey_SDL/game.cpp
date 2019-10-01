@@ -3,7 +3,7 @@
 // ------------------------------------------------------------------------------
 const int leftSideGate = (boardWidth - gateWidth) / 2;
 const int rightSideGate = leftSideGate + gateWidth;
-
+bool gameOver = false;
 
 //==============================================================================
 AirHockey::AirHockey() : mGameUI(new GUI_Renderer)						
@@ -105,9 +105,21 @@ void AirHockey::calcGameState()
 		{
 			mGameUI->playClashSound(eClash_Goal);
 			mGameElements[(puck.yCurrPos > puckMaxY ? eTypeOfElement_Bot : eTypeOfElement_Player)].score++;           //find out who scored
-			//puck.yCurrPos = (puck.yCurrPos > puckMaxY ? puckMaxY : 4);
 			
-			//mGameUI->draw(mGameElements);
+
+			const int maxScore = 1;
+
+			if (mGameElements[eTypeOfElement_Player].score == maxScore)
+			{
+				mIsPlay = false;
+				gameOver = true;
+			}
+			
+			if (mGameElements[eTypeOfElement_Bot].score == maxScore)
+			{
+				mIsPlay = false;	
+				gameOver = true;
+			}
 			
 			prepareForGame();
 			return;
@@ -137,8 +149,8 @@ void AirHockey::checkBoardLimitsFor(ETypeOfElement type)
 	//Does not allow opponents to go beyond the boundaries of their field
 	if (type == eTypeOfElement_Player && bat.yCurrPos < boardHeight / 2)
 		bat.yCurrPos = boardHeight / 2;
-	if (type == eTypeOfElement_Bot && bat.yCurrPos > boardHeight / 2 - malletDiameter)
-		bat.yCurrPos = boardHeight / 2 - malletDiameter;
+	/*if (type == eTypeOfElement_Bot && bat.yCurrPos > boardHeight / 2 - malletDiameter)
+		bat.yCurrPos = boardHeight / 2 - malletDiameter;*/
 
 	//touching the bat boundary of the field
 	if (bat.xCurrPos > boardWidth - malletDiameter - borderWidth)
@@ -214,20 +226,14 @@ void AirHockey::startGame()
 		default:
 		case eEvent_NoEvent:
 			break;
-
 		case eEvent_esc:
 			return;
-
 		case eEvent_PrepareToPlay:
 			if (!mIsPlay)
 			{
 				mGamePreparation = true;
-				
-				//prepareForGame();
 			}
 			break;
-			
-			//break;
 		case eEvent_Play:
 			if (!mIsPlay)
 			{
@@ -235,7 +241,6 @@ void AirHockey::startGame()
 				mIsPlay = true;
 			}
 			break;
-
 		case eEvent_ChangeDifficulty:
 			if (!mIsPlay){
 				(gameDifficulty == eDifficulty_Easy ? gameDifficulty = eDifficulty_Normal : gameDifficulty = eDifficulty_Easy); 
@@ -248,7 +253,6 @@ void AirHockey::startGame()
 			if (!mIsPlay)
 				mGameUI->newGame(gameDifficulty);
 			break;
-
 		case eEvent_Menu:
 			if (mIsPlay){
 				mIsPlay = false;
@@ -258,6 +262,12 @@ void AirHockey::startGame()
 			}
 			break;
 		}
+		if (gameOver == true)
+		{
+			mGameUI->newGame(gameDifficulty);
+			gameOver = false;
+		}
+			
 
 		if (mGamePreparation && !mIsPlay) {
 			prepareForGame();
@@ -265,8 +275,7 @@ void AirHockey::startGame()
 			
 		}
 
-		if (mIsPlay && !mGamePreparation){
-	
+		if (!mGamePreparation && mIsPlay){
 			calcBotPos();
 			checkBoardLimitsFor(eTypeOfElement_Player);
 			calcGameState();

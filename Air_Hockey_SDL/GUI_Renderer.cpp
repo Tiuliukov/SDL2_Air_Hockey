@@ -272,7 +272,7 @@ void GUI_Renderer::draw(const std::vector<SElement> & inElements, bool gamePrepa
 
 	if (gamePreparation)
 	{
-		printMsg();
+		printMsg("Please, take your mallet");
 	}
 	
 	// Draw Puck
@@ -345,16 +345,17 @@ void GUI_Renderer::drawSpeaker()
 	
 }
 
-void GUI_Renderer::printMsg()
+void GUI_Renderer::printMsg(std::string msg)
 {
 	SDL_Rect Msg;
 	Msg.x = 140;
+	Msg.y = 500;
 	Msg.h = fontMsgH;
 	Msg.w = fontMsgW;
-
-	Msg.y = 500;
+	
+	const char * cMsg = msg.c_str();
 	SDL_Color mColMsg = cColorGreen;
-	mTtf = TTF_RenderText_Solid(mFont, "Please, take your mallet", mColMsg);
+	mTtf = TTF_RenderText_Solid(mFont, cMsg, mColMsg);
 	mMsg = SDL_CreateTextureFromSurface(mRenderer, mTtf);
 	SDL_RenderCopy(mRenderer, mMsg, 0, &Msg);
 	SDL_FreeSurface(mTtf);
