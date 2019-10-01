@@ -107,7 +107,7 @@ void AirHockey::calcGameState()
 			mGameElements[(puck.yCurrPos > puckMaxY ? eTypeOfElement_Bot : eTypeOfElement_Player)].score++;           //find out who scored
 			
 
-			const int maxScore = 1;
+			const int maxScore = 7;
 
 			if (mGameElements[eTypeOfElement_Player].score == maxScore)
 			{
