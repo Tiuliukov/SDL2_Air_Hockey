@@ -44,12 +44,10 @@ void AirHockey::hitPuck(ETypeOfElement type)
 		hitElem.xPrevPos += jumpX;
 		hitElem.yPrevPos += jumpY;
 
-
-
 		if (pow(malletRadius + puckRadius, 2) >= pow((hitElem.xPrevPos + malletRadius) - (puck.xCurrPos + puckRadius), 2) + pow((hitElem.yPrevPos + malletRadius) - (puck.yCurrPos + puckRadius), 2))
 		{
 			doHit = true;
-			
+
 			double hyp = hypot(hitElem.xPrevPos - puck.xCurrPos, hitElem.yPrevPos - puck.yCurrPos);			
 			double sin = (hitElem.yPrevPos - puck.yCurrPos) / hyp;
 			double cos = (puck.xCurrPos - hitElem.xPrevPos) / hyp;
@@ -69,14 +67,13 @@ void AirHockey::hitPuck(ETypeOfElement type)
 			puck.xCurrPos += puck.xSpeed;			
 			puck.yCurrPos += puck.ySpeed;
 		}
-
-		
 		--bit;
 	}
 
 	if (doHit)
 		mGameUI->playClashSound(eClash_Hit);			
 }
+
 
 void AirHockey::calcGameState()
 {
@@ -92,21 +89,21 @@ void AirHockey::calcGameState()
 	hitPuck(eTypeOfElement_Bot);
 
 	//boards
-	if (puck.xCurrPos > puckMaxX || puck.xCurrPos < borderWidth)
+	if (puck.xCurrPos > puckMaxX || puck.xCurrPos <= 0)
 	{
 		puck.xCurrPos = (puck.xCurrPos > puckMaxX ? puckMaxX * 2 - puck.xCurrPos : borderWidth - puck.xCurrPos);                //calculation of the X coordinate after the collision with the field boundary
 		puck.xSpeed *= -1;
 		mGameUI->playClashSound(eClash_Board);
 	}
-	if (puck.yCurrPos > puckMaxY || puck.yCurrPos < borderWidth)
+
+	//goal
+	if ((puck.xCurrPos > leftSideGate) && puck.xCurrPos < (rightSideGate - puckDiameter))
 	{
-		//goal
-		if ((puck.xCurrPos > leftSideGate) && puck.xCurrPos < (rightSideGate - puckDiameter))
+		if (puck.yCurrPos > (puckMaxY + puckDiameter) || puck.yCurrPos <= -puckDiameter) 
 		{
 			mGameUI->playClashSound(eClash_Goal);
 			mGameElements[(puck.yCurrPos > puckMaxY ? eTypeOfElement_Bot : eTypeOfElement_Player)].score++;           //find out who scored
 			
-
 			const int maxScore = 7;
 
 			if (mGameElements[eTypeOfElement_Player].score == maxScore)
@@ -114,24 +111,28 @@ void AirHockey::calcGameState()
 				mIsPlay = false;
 				gameOver = true;
 			}
-			
+
 			if (mGameElements[eTypeOfElement_Bot].score == maxScore)
 			{
-				mIsPlay = false;	
+				mIsPlay = false;
 				gameOver = true;
 			}
-			
+
 			prepareForGame();
 			return;
-		}
+		}	
+	}
+
+	else if (puck.yCurrPos > puckMaxY || puck.yCurrPos <= 0) 
+	{
 		puck.yCurrPos = (puck.yCurrPos > puckMaxY ? puckMaxY * 2 - puck.yCurrPos : borderWidth - puck.yCurrPos);					//calculation of the Ó coordinate after the collision with the field boundary
 		puck.ySpeed *= -1;
 		mGameUI->playClashSound(eClash_Board);
 
 	}
-	
+
 	// deceleration 
-	puck.xSpeed *= 0.99;								
+	puck.xSpeed *= 0.99;
 	puck.ySpeed *= 0.99;
 	if (abs(puck.xSpeed) < 0.7 && abs(puck.ySpeed) < 0.7)	// stops the puck when its speed gets too small
 	{
@@ -139,6 +140,69 @@ void AirHockey::calcGameState()
 		puck.ySpeed = 0;
 	}
 }
+
+//void AirHockey::calcGameState()
+//{
+//	SElement & puck = mGameElements[eTypeOfElement_Puck];
+//
+//	int puckMaxX = boardWidth - puckDiameter;														///////////////////////////////////////////////////////////////////////////!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+//	int puckMaxY = boardHeight - puckDiameter;
+//
+//	puck.xCurrPos += puck.xSpeed;
+//	puck.yCurrPos += puck.ySpeed;
+//
+//	hitPuck(eTypeOfElement_Player);
+//	hitPuck(eTypeOfElement_Bot);
+//
+//	//boards
+//	if (puck.xCurrPos > puckMaxX || puck.xCurrPos < borderWidth)
+//	{
+//		puck.xCurrPos = (puck.xCurrPos > puckMaxX ? puckMaxX * 2 - puck.xCurrPos : borderWidth - puck.xCurrPos);                //calculation of the X coordinate after the collision with the field boundary
+//		puck.xSpeed *= -1;
+//		mGameUI->playClashSound(eClash_Board);
+//	}
+//	if (puck.yCurrPos > puckMaxY || puck.yCurrPos < borderWidth)
+//	{
+//		//goal
+//		if ((puck.xCurrPos > leftSideGate) && puck.xCurrPos < (rightSideGate - puckDiameter))
+//		{
+//			mGameUI->playClashSound(eClash_Goal);
+//			mGameElements[(puck.yCurrPos > puckMaxY ? eTypeOfElement_Bot : eTypeOfElement_Player)].score++;           //find out who scored
+//			
+//
+//			const int maxScore = 7;
+//
+//			if (mGameElements[eTypeOfElement_Player].score == maxScore)
+//			{
+//				mIsPlay = false;
+//				gameOver = true;
+//			}
+//			
+//			if (mGameElements[eTypeOfElement_Bot].score == maxScore)
+//			{
+//				mIsPlay = false;	
+//				gameOver = true;
+//			}
+//			
+//			prepareForGame();
+//			return;
+//		}
+//
+//		puck.yCurrPos = (puck.yCurrPos > puckMaxY ? puckMaxY * 2 - puck.yCurrPos : borderWidth - puck.yCurrPos);					//calculation of the Ó coordinate after the collision with the field boundary
+//		puck.ySpeed *= -1;
+//		mGameUI->playClashSound(eClash_Board);
+//
+//	}
+//	
+//	// deceleration 
+//	puck.xSpeed *= 0.99;								
+//	puck.ySpeed *= 0.99;
+//	if (abs(puck.xSpeed) < 0.7 && abs(puck.ySpeed) < 0.7)	// stops the puck when its speed gets too small
+//	{
+//		puck.xSpeed = 0;
+//		puck.ySpeed = 0;
+//	}
+//}
 
 
 

@@ -251,20 +251,16 @@ void GUI_Renderer::drawGame(const std::vector<SElement> & inElements, bool gameP
 	// Draw Score
 	drawScore(gameElement, inElements);
 
-	if (gamePreparation)
+	if (gamePreparation)								
 	{
 		printMsg("Please, take your mallet");
 	}
-	
 	// Draw Puck
 	drawGameElement(gameElement, mPuck, inElements[eTypeOfElement_Puck], puckDiameter);
-	
 	// Draw Bot
 	drawGameElement(gameElement, mMalletBot, inElements[eTypeOfElement_Bot], malletDiameter);
-
 	// Draw Player
 	drawGameElement(gameElement, mMalletPlayer, inElements[eTypeOfElement_Player], malletDiameter);
-	
 	// Draw SoundOn/SoundOff button
 	drawSpeaker();
 
