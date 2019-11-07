@@ -11,8 +11,6 @@ AirHockey::AirHockey() : mGameUI(new GUI_Renderer)
 	mGameElements.resize(3);		
 }
 
-
-
 void AirHockey::prepareForGame()
 {
 	//setting the starting coordinates of the game elements
