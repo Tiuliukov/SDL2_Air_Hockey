@@ -22,7 +22,7 @@ const int borderWidth = 5;					//border thickness around the playing field
 
 
 
-#define MAX_SPEED puckDiameter / 2 
+#define MAX_SPEED puckDiameter / 2 //???????????????????????????????????????????????????????????????????????????????????????
 
 class GUI_Renderer
 {
@@ -30,12 +30,13 @@ public:
 	GUI_Renderer();
 	~GUI_Renderer();
 
-	void newGame(EDifficulty inDifficulty); 
+	void gameMenu(EDifficulty inDifficulty); 
 	EEvent checkEvent(SElement & inStriker) const;
-	void draw(const std::vector<SElement> & inElements, bool gamePreparation);
-	void drawElement();
+	void drawGame(const std::vector<SElement> & inElements, bool gamePreparation);
+	void drawGameElement(SDL_Rect & inGameElement, SDL_Texture* texture, const SElement & inElement, const int & diameter);
+	void drawScore(SDL_Rect & inGameElement, const std::vector<SElement> & inElements);
 	bool enableSound();
-	void playClashSound(EClash s);
+	void playClashSound(EClash s); //???????????????
 	void printMsg(std::string msg);
 
 private:
@@ -52,7 +53,7 @@ private:
 	SDL_Texture* mGameField;
 	SDL_Texture* mDifficultyEasy;
 	SDL_Texture* mDifficultyNormal;
-	SDL_Texture* mMallet;
+	SDL_Texture* mMalletPlayer;
 	SDL_Texture* mMalletBot;
 	SDL_Texture* mPuck;
 	SDL_Texture* mGameScore;
