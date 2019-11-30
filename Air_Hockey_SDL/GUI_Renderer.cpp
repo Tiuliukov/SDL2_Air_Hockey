@@ -11,7 +11,7 @@ static const int fontScoreH = 40;
 static const int fontScoreW = 20;
 static const int fontMsgH = 50;
 static const int fontMsgW = 200;
-SDL_Rect Src; 
+
 
 //==============================================================================
 GUI_Renderer::GUI_Renderer()

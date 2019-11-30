@@ -1,6 +1,6 @@
 #include "game.h"
 
-// ------------------------------------------------------------------------------
+// ------------------------------------------------------------------------------ move to the class!!!!!!!!!!!!!!!
 const int leftSideGate = (boardWidth - gateWidth) / 2;
 const int rightSideGate = leftSideGate + gateWidth;
 bool gameOver = false;
@@ -27,20 +27,20 @@ void AirHockey::prepareForGame()
 	mGameElements[eTypeOfElement_Puck] = { 0, yStartPosPuck, yStartPosBot, yStartPosPuck, yStartPosBot, 0, 0 };
 }
 
-void AirHockey::hitPuck(ETypeOfElement type)
+void AirHockey::calculatePosition(ETypeOfElement type)
 {
 	SElement & hitElem = mGameElements[type];
 	SElement & puck = mGameElements[eTypeOfElement_Puck];																					
 	
-	int bit = 1 + abs(abs(hitElem.xSpeed) > abs(hitElem.ySpeed) ? hitElem.xSpeed : hitElem.ySpeed);		
-	double jumpX = hitElem.xSpeed / bit;
-	double jumpY = hitElem.ySpeed / bit;
+	int impactStrength = 1 + abs(abs(hitElem.xSpeed) > abs(hitElem.ySpeed) ? hitElem.xSpeed : hitElem.ySpeed);	//impact force calculation	
+	double displacementX = hitElem.xSpeed / impactStrength;
+	double displacementY = hitElem.ySpeed / impactStrength;
 
 	bool doHit = false;
-	while (bit)
+	while (impactStrength)
 	{
-		hitElem.xPrevPos += jumpX;
-		hitElem.yPrevPos += jumpY;
+		hitElem.xPrevPos += displacementX;
+		hitElem.yPrevPos += displacementY;
 
 		if (pow(malletRadius + puckRadius, 2) >= pow((hitElem.xPrevPos + malletRadius) - (puck.xCurrPos + puckRadius), 2) + pow((hitElem.yPrevPos + malletRadius) - (puck.yCurrPos + puckRadius), 2))
 		{
@@ -56,16 +56,10 @@ void AirHockey::hitPuck(ETypeOfElement type)
 			puck.xSpeed = tSpeed * sin + nSpeed * cos + hitElem.xSpeed;
 			puck.ySpeed = tSpeed * cos - nSpeed * sin + hitElem.ySpeed;
 
-			while (pow(MAX_SPEED, 2) < pow(puck.xSpeed, 2) + pow(puck.ySpeed, 2))		// deceleration 
-			{
-				puck.xSpeed *= 0.98;		
-				puck.ySpeed *= 0.98;
-			}
-
 			puck.xCurrPos += puck.xSpeed;			
 			puck.yCurrPos += puck.ySpeed;
 		}
-		--bit;
+		--impactStrength;
 	}
 
 	if (doHit)
@@ -83,13 +77,13 @@ void AirHockey::calcGameState()
 	puck.xCurrPos += puck.xSpeed;
 	puck.yCurrPos += puck.ySpeed;
 
-	hitPuck(eTypeOfElement_Player);
-	hitPuck(eTypeOfElement_Bot);
+	calculatePosition(eTypeOfElement_Player);
+	calculatePosition(eTypeOfElement_Bot);
 
 	//boards
 	if (puck.xCurrPos > puckMaxX || puck.xCurrPos <= 0)
 	{
-		puck.xCurrPos = (puck.xCurrPos > puckMaxX ? puckMaxX * 2 - puck.xCurrPos : borderWidth - puck.xCurrPos);                //calculation of the X coordinate after the collision with the field boundary
+		puck.xCurrPos = (puck.xCurrPos > puckMaxX ? puckMaxX * 2 - puck.xCurrPos : borderWidth - puck.xCurrPos);        //calculation of the X coordinate after the collision with the field boundary
 		puck.xSpeed *= -1;
 		mGameUI->playClashSound(eClash_Board);
 	}
@@ -102,9 +96,8 @@ void AirHockey::calcGameState()
 			mGameUI->playClashSound(eClash_Goal);
 			mGameElements[(puck.yCurrPos > puckMaxY ? eTypeOfElement_Bot : eTypeOfElement_Player)].score++;           //find out who scored
 			
-			const int maxScore = 7;
+			const int maxScore = 2;													//!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-			const int maxScore = 1;
 
 			if (mGameElements[eTypeOfElement_Player].score == maxScore)
 			{
@@ -125,15 +118,15 @@ void AirHockey::calcGameState()
 
 	else if (puck.yCurrPos > puckMaxY || puck.yCurrPos <= 0) 
 	{
-		puck.yCurrPos = (puck.yCurrPos > puckMaxY ? puckMaxY * 2 - puck.yCurrPos : borderWidth - puck.yCurrPos);					//calculation of the Ó coordinate after the collision with the field boundary
+		puck.yCurrPos = (puck.yCurrPos > puckMaxY ? puckMaxY * 2 - puck.yCurrPos : borderWidth - puck.yCurrPos);		//calculation of the Ó coordinate after the collision with the field boundary
 		puck.ySpeed *= -1;
 		mGameUI->playClashSound(eClash_Board);
 
 	}
 
 	// deceleration 
-	puck.xSpeed *= 0.99;
-	puck.ySpeed *= 0.99;
+	puck.xSpeed *= 0.98;
+	puck.ySpeed *= 0.98;
 	if (abs(puck.xSpeed) < 0.7 && abs(puck.ySpeed) < 0.7)	// stops the puck when its speed gets too small
 	{
 		puck.xSpeed = 0;
@@ -141,68 +134,6 @@ void AirHockey::calcGameState()
 	}
 }
 
-//void AirHockey::calcGameState()
-//{
-//	SElement & puck = mGameElements[eTypeOfElement_Puck];
-//
-//	int puckMaxX = boardWidth - puckDiameter;														///////////////////////////////////////////////////////////////////////////!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-//	int puckMaxY = boardHeight - puckDiameter;
-//
-//	puck.xCurrPos += puck.xSpeed;
-//	puck.yCurrPos += puck.ySpeed;
-//
-//	hitPuck(eTypeOfElement_Player);
-//	hitPuck(eTypeOfElement_Bot);
-//
-//	//boards
-//	if (puck.xCurrPos > puckMaxX || puck.xCurrPos < borderWidth)
-//	{
-//		puck.xCurrPos = (puck.xCurrPos > puckMaxX ? puckMaxX * 2 - puck.xCurrPos : borderWidth - puck.xCurrPos);                //calculation of the X coordinate after the collision with the field boundary
-//		puck.xSpeed *= -1;
-//		mGameUI->playClashSound(eClash_Board);
-//	}
-//	if (puck.yCurrPos > puckMaxY || puck.yCurrPos < borderWidth)
-//	{
-//		//goal
-//		if ((puck.xCurrPos > leftSideGate) && puck.xCurrPos < (rightSideGate - puckDiameter))
-//		{
-//			mGameUI->playClashSound(eClash_Goal);
-//			mGameElements[(puck.yCurrPos > puckMaxY ? eTypeOfElement_Bot : eTypeOfElement_Player)].score++;           //find out who scored
-//			
-//
-//			const int maxScore = 7;
-//
-//			if (mGameElements[eTypeOfElement_Player].score == maxScore)
-//			{
-//				mIsPlay = false;
-//				gameOver = true;
-//			}
-//			
-//			if (mGameElements[eTypeOfElement_Bot].score == maxScore)
-//			{
-//				mIsPlay = false;	
-//				gameOver = true;
-//			}
-//			
-//			prepareForGame();
-//			return;
-//		}
-//
-//		puck.yCurrPos = (puck.yCurrPos > puckMaxY ? puckMaxY * 2 - puck.yCurrPos : borderWidth - puck.yCurrPos);					//calculation of the Ó coordinate after the collision with the field boundary
-//		puck.ySpeed *= -1;
-//		mGameUI->playClashSound(eClash_Board);
-//
-//	}
-//	
-//	// deceleration 
-//	puck.xSpeed *= 0.99;								
-//	puck.ySpeed *= 0.99;
-//	if (abs(puck.xSpeed) < 0.7 && abs(puck.ySpeed) < 0.7)	// stops the puck when its speed gets too small
-//	{
-//		puck.xSpeed = 0;
-//		puck.ySpeed = 0;
-//	}
-//}
 
 
 
@@ -241,7 +172,7 @@ void AirHockey::checkBoardLimitsFor(ETypeOfElement type)
 	bat.ySpeed = bat.yCurrPos - bat.yPrevPos;
 }
 
-void AirHockey::calcBotPos()
+void AirHockey::botMoveStrategy()
 {
 	SElement & bot = mGameElements[eTypeOfElement_Bot];
 	SElement & puck = mGameElements[eTypeOfElement_Puck];
@@ -284,6 +215,8 @@ void AirHockey::startGame()
 
 	while (true)
 	{
+		frameStart = SDL_GetTicks();
+
 		EEvent event = mGameUI->checkEvent(mGameElements[eTypeOfElement_Player]);
 		switch (event)
 		{
@@ -329,6 +262,8 @@ void AirHockey::startGame()
 		if (gameOver == true)
 		{
 			mGameUI->gameMenu(gameDifficulty);
+			mGameElements[eTypeOfElement_Bot].score = 0;
+			mGameElements[eTypeOfElement_Player].score = 0;
 			gameOver = false;
 		}
 			
@@ -340,10 +275,14 @@ void AirHockey::startGame()
 		}
 
 		if (!mGamePreparation && mIsPlay){
-			calcBotPos();
+			botMoveStrategy();
 			checkBoardLimitsFor(eTypeOfElement_Player);
 			calcGameState();
 			mGameUI->drawGame(mGameElements, mGamePreparation);
+		}
+
+		if (frameDelay > frameTime) {
+			SDL_Delay(frameDelay - frameTime);
 		}
 	}
 }

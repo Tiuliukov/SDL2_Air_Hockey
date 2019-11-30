@@ -10,9 +10,9 @@ public:
 
 private:
 	void prepareForGame();
-	void calcBotPos();
+	void botMoveStrategy();
 	void calcGameState();
-	void hitPuck(ETypeOfElement type);
+	void calculatePosition(ETypeOfElement type);
 	void checkBoardLimitsFor(ETypeOfElement type);
 	std::unique_ptr<GUI_Renderer> mGameUI;
 	std::vector<SElement> mGameElements;
@@ -21,7 +21,11 @@ private:
 	bool mIsPlay = false;
 	bool mMute = false;
 
-	
+	const int FPS = 120;
+	const int frameDelay = 1000 / FPS;
+
+	unsigned int frameStart;
+	int frameTime;
 
 
 };

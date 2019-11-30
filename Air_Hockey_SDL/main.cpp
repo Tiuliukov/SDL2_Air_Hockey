@@ -1,4 +1,3 @@
-//2019-06-11
 #include "game.h"
 
 #undef main

@@ -60,9 +60,12 @@ private:
 	SDL_Texture* mMsg;
 	SDL_Texture* mSpeakerOn;
 	SDL_Texture* mSpeakerOff;
+
+	SDL_Rect Src;
+
 	TTF_Font *mFont;
-	
 	
 	Mix_Music* mSound;
 	Mix_Chunk* mBoard, *mHit, *mGoal;
+
 };
